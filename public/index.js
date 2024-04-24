@@ -3029,7 +3029,7 @@ var getAvailableWallets = function __do() {
 };
 
 // output/Csl/foreign.js
-import * as CSL from "@emurgo/cardano-serialization-lib-browser";
+import * as CSL from "../node_modules/@emurgo/cardano-serialization-lib-browser";
 function errorableToPurs(f, ...vars) {
   return (left) => (right) => {
     try {
