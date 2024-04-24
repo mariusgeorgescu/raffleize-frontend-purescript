@@ -1,0 +1,35 @@
+package:
+  name: raffleize-frontend-purescript
+  dependencies:
+    - console
+    - effect
+    - prelude
+    - halogen
+    - cip30
+    - cip30-typesafe
+    - cardano-serialization-lib
+    # - cardano-transaction-lib
+  test:
+    main: Test.Main
+    dependencies: []
+workspace:
+  packageSet:
+    registry: 50.10.0
+  extraPackages:
+    # cardano-transaction-lib:
+    #   git: https://github.com/Plutonomicon/cardano-transaction-lib.git
+    #   ref: v7.0.0 # branch, tag, or commit hash
+
+    cardano-serialization-lib:
+      git: https://github.com/mariusgeorgescu/purescript-cardano-serialization-lib.git
+      ref: 7d6c664b125ce8c3cc441912fb8daf72294c17e7 # branch, tag, or commit hash
+
+    cip30-typesafe:
+      git: https://github.com/mariusgeorgescu/purescript-cip30-typesafe.git
+      ref: a8cf31f14663b2737387ed26090516362c69d0f3 # branch, tag, or commit hash
+    cip30:
+      git: https://github.com/mariusgeorgescu/purescript-cip30.git
+      ref: fb4b90fcca1f57edaacd6405965bf245d3504583 # branch, tag, or commit hash
+  bundle:
+    extraArgs:
+      - "--external:@emurgo/cardano-serialization-lib-browser"
