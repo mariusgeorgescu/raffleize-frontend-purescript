@@ -12,6 +12,9 @@ package:
   test:
     main: Test.Main
     dependencies: []
+  bundle:
+    extraArgs:
+      - "--external:@emurgo/cardano-serialization-lib-browser"
 workspace:
   packageSet:
     registry: 50.10.0
@@ -30,6 +33,3 @@ workspace:
     cip30:
       git: https://github.com/mariusgeorgescu/purescript-cip30.git
       ref: fb4b90fcca1f57edaacd6405965bf245d3504583 # branch, tag, or commit hash
-  bundle:
-    extraArgs:
-      - "--external:@emurgo/cardano-serialization-lib-browser"
