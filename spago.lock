@@ -3,6 +3,9 @@ workspace:
     raffleize-frontend-purescript:
       path: ./
       dependencies:
+        - affjax
+        - affjax-web
+        - argonaut-aeson-generic
         - cardano-serialization-lib
         - cip30
         - cip30-typesafe
@@ -10,12 +13,18 @@ workspace:
         - effect
         - halogen
         - prelude
+        - profunctor-lenses
       test_dependencies: []
       build_plan:
         - aff
         - aff-promise
+        - affjax
+        - affjax-web
         - ansi
+        - argonaut-aeson-generic
+        - argonaut-codecs
         - argonaut-core
+        - argonaut-generic
         - arraybuffer-types
         - arrays
         - assert
@@ -41,6 +50,7 @@ workspace:
         - foreign
         - foreign-object
         - fork
+        - form-urlencoded
         - free
         - freeap
         - functions
@@ -49,12 +59,16 @@ workspace:
         - halogen
         - halogen-subscriptions
         - halogen-vdom
+        - http-methods
         - identity
         - integers
         - invariant
         - js-date
         - js-promise
+        - js-timers
+        - js-uri
         - lazy
+        - lcg
         - lists
         - literals
         - maybe
@@ -72,7 +86,10 @@ workspace:
         - pipes
         - prelude
         - profunctor
+        - profunctor-lenses
         - psci-support
+        - quickcheck
+        - random
         - record
         - refs
         - safe-coerce
@@ -80,6 +97,7 @@ workspace:
         - st
         - strings
         - tailrec
+        - test-unit
         - transformers
         - tuples
         - type-equality
@@ -98,6 +116,7 @@ workspace:
         - web-storage
         - web-touchevents
         - web-uievents
+        - web-xhr
   package_set:
     address:
       registry: 50.10.0
@@ -626,6 +645,33 @@ packages:
     dependencies:
       - aff
       - foreign
+  affjax:
+    type: registry
+    version: 13.0.0
+    integrity: sha256-blYfaoW4FYIrIdvmT4sB7nN7BathFaEfZuiVLPmHJOo=
+    dependencies:
+      - aff
+      - argonaut-core
+      - arraybuffer-types
+      - foreign
+      - form-urlencoded
+      - http-methods
+      - integers
+      - media-types
+      - nullable
+      - refs
+      - unsafe-coerce
+      - web-xhr
+  affjax-web:
+    type: registry
+    version: 1.0.0
+    integrity: sha256-n/yJUk1wMxMN7fJ2TJ+fELgieomy29N617yOshAnrc0=
+    dependencies:
+      - aff
+      - affjax
+      - either
+      - maybe
+      - prelude
   ansi:
     type: registry
     version: 7.0.0
@@ -634,6 +680,44 @@ packages:
       - foldable-traversable
       - lists
       - strings
+  argonaut-aeson-generic:
+    type: registry
+    version: 0.4.1
+    integrity: sha256-zYTqoc7JyJpRxOdQ7SiR5re9WZ3EtrIdBZmigCBOmh8=
+    dependencies:
+      - argonaut-codecs
+      - argonaut-core
+      - argonaut-generic
+      - arrays
+      - bifunctors
+      - control
+      - effect
+      - either
+      - foldable-traversable
+      - foreign-object
+      - maybe
+      - partial
+      - prelude
+      - psci-support
+      - record
+      - test-unit
+      - typelevel-prelude
+  argonaut-codecs:
+    type: registry
+    version: 9.1.0
+    integrity: sha256-N6efXByUeg848ompEqJfVvZuZPfdRYDGlTDFn0G0Oh8=
+    dependencies:
+      - argonaut-core
+      - arrays
+      - effect
+      - foreign-object
+      - identity
+      - integers
+      - maybe
+      - nonempty
+      - ordered-collections
+      - prelude
+      - record
   argonaut-core:
     type: registry
     version: 7.0.0
@@ -650,6 +734,15 @@ packages:
       - prelude
       - strings
       - tailrec
+  argonaut-generic:
+    type: registry
+    version: 8.0.0
+    integrity: sha256-WCqRWoomRKg5BFZnGBS4k4SqBX84fy/X1aJzMyaIeP0=
+    dependencies:
+      - argonaut-codecs
+      - argonaut-core
+      - prelude
+      - record
   arraybuffer-types:
     type: registry
     version: 3.0.2
@@ -934,6 +1027,18 @@ packages:
     integrity: sha256-X7u0SuCvFbLbzuNEKLBNuWjmcroqMqit4xEzpQwAP7E=
     dependencies:
       - aff
+  form-urlencoded:
+    type: registry
+    version: 7.0.0
+    integrity: sha256-WUzk8DTjrbPVHKZ5w7XpPBO6ci6xFhvYguHp6RvX+18=
+    dependencies:
+      - foldable-traversable
+      - js-uri
+      - maybe
+      - newtype
+      - prelude
+      - strings
+      - tuples
   free:
     type: registry
     version: 7.1.0
@@ -1055,6 +1160,14 @@ packages:
       - tuples
       - unsafe-coerce
       - web-html
+  http-methods:
+    type: registry
+    version: 6.0.0
+    integrity: sha256-Orr7rbDGcp7qoqmUMXPRMjBx+C4jqOQcFe9+gE3nMgU=
+    dependencies:
+      - either
+      - prelude
+      - strings
   identity:
     type: registry
     version: 6.0.0
@@ -1101,6 +1214,19 @@ packages:
       - functions
       - maybe
       - prelude
+  js-timers:
+    type: registry
+    version: 6.1.0
+    integrity: sha256-znHWLSSOYw15P5DTcsAdal2lf7nGA2yayLdOZ2t5r7o=
+    dependencies:
+      - effect
+  js-uri:
+    type: registry
+    version: 3.1.0
+    integrity: sha256-3p0ynHveCJmC2CXze+eMBdW/2l5e953Q8XMAKz+jxUo=
+    dependencies:
+      - functions
+      - maybe
   lazy:
     type: registry
     version: 6.0.0
@@ -1110,6 +1236,17 @@ packages:
       - foldable-traversable
       - invariant
       - prelude
+  lcg:
+    type: registry
+    version: 4.0.0
+    integrity: sha256-h7ME5cthLfbgJOJdsZcSfFpwXsx4rf8YmhebU+3iSYg=
+    dependencies:
+      - effect
+      - integers
+      - maybe
+      - partial
+      - prelude
+      - random
   lists:
     type: registry
     version: 7.0.0
@@ -1277,6 +1414,31 @@ packages:
       - newtype
       - prelude
       - tuples
+  profunctor-lenses:
+    type: registry
+    version: 8.0.0
+    integrity: sha256-K7f29rHRHgVSb2Y/PaSKtfYPriP6n87BJNO7EhsZHas=
+    dependencies:
+      - arrays
+      - bifunctors
+      - const
+      - control
+      - distributive
+      - either
+      - foldable-traversable
+      - foreign-object
+      - functors
+      - identity
+      - lists
+      - maybe
+      - newtype
+      - ordered-collections
+      - partial
+      - prelude
+      - profunctor
+      - record
+      - transformers
+      - tuples
   psci-support:
     type: registry
     version: 6.0.0
@@ -1285,6 +1447,45 @@ packages:
       - console
       - effect
       - prelude
+  quickcheck:
+    type: registry
+    version: 8.0.1
+    integrity: sha256-ZvpccKQCvgslTXZCNmpYW4bUsFzhZd/kQUr2WmxFTGY=
+    dependencies:
+      - arrays
+      - console
+      - control
+      - effect
+      - either
+      - enums
+      - exceptions
+      - foldable-traversable
+      - gen
+      - identity
+      - integers
+      - lazy
+      - lcg
+      - lists
+      - maybe
+      - newtype
+      - nonempty
+      - numbers
+      - partial
+      - prelude
+      - record
+      - st
+      - strings
+      - tailrec
+      - transformers
+      - tuples
+      - unfoldable
+  random:
+    type: registry
+    version: 6.0.0
+    integrity: sha256-CJ611a35MPCE7XQMp0rdC6MCn76znlhisiCRgboAG+Q=
+    dependencies:
+      - effect
+      - integers
   record:
     type: registry
     version: 4.0.0
@@ -1381,6 +1582,21 @@ packages:
       - partial
       - prelude
       - refs
+  test-unit:
+    type: registry
+    version: 17.0.0
+    integrity: sha256-aITJ2KngFFjASmG0JjnjybaKWl9dn7Hf2B3Wk4engNs=
+    dependencies:
+      - aff
+      - avar
+      - effect
+      - either
+      - free
+      - js-timers
+      - lists
+      - prelude
+      - quickcheck
+      - strings
   transformers:
     type: registry
     version: 6.0.0
@@ -1537,4 +1753,15 @@ packages:
     version: 5.0.0
     integrity: sha256-5I+ut9JYno3wowti3vJGs1afKCm1ucppKuy+zhuSyss=
     dependencies:
+      - web-html
+  web-xhr:
+    type: registry
+    version: 5.0.1
+    integrity: sha256-3dbIPVG66S+hPrgEVnpD78hrGjE7qlBbsReWOz89Ios=
+    dependencies:
+      - arraybuffer-types
+      - datetime
+      - http-methods
+      - web-dom
+      - web-file
       - web-html

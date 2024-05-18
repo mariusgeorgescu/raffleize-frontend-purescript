@@ -1,4 +1,15 @@
-module Button where
+module Components.WalletConnectButton
+  ( ConnectedWallet
+  , WalletConnectAction(..)
+  , WalletConnectState
+  , component
+  , handleAction
+  , render
+  , renderWalletConnect
+  , renderWalletListItem
+  , renderWalletsList
+  )
+  where
 
 import Data.Maybe (Maybe(..), fromMaybe)
 import Prelude

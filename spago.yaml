@@ -5,9 +5,13 @@ package:
     - effect
     - prelude
     - halogen
+    - affjax
+    - affjax-web
     - cip30
     - cip30-typesafe
     - cardano-serialization-lib
+    - argonaut-aeson-generic
+    - profunctor-lenses
     # - cardano-transaction-lib
   test:
     main: Test.Main
