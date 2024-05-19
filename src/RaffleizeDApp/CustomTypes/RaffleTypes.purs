@@ -75,6 +75,7 @@ newtype RaffleStateData =
     , rRandomSeed :: Int
     }
 
+
 instance encodeJsonRaffleStateData :: EncodeJson RaffleStateData where
   encodeJson = genericEncodeAeson Argonaut.defaultOptions
 instance decodeJsonRaffleStateData :: DecodeJson RaffleStateData where
