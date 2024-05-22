@@ -13,6 +13,7 @@ workspace:
         - effect
         - formatters
         - halogen
+        - halogen-svg-elems
         - prelude
         - profunctor-lenses
       test_dependencies: []
@@ -61,6 +62,7 @@ workspace:
         - gen
         - halogen
         - halogen-subscriptions
+        - halogen-svg-elems
         - halogen-vdom
         - http-methods
         - identity
@@ -1171,6 +1173,12 @@ packages:
       - refs
       - safe-coerce
       - unsafe-reference
+  halogen-svg-elems:
+    type: registry
+    version: 8.0.0
+    integrity: sha256-NtZ30NoNyadVEsRcdY0zvm2yyahxUTgpioDNVz5gEIA=
+    dependencies:
+      - halogen
   halogen-vdom:
     type: registry
     version: 8.0.0

@@ -5,6 +5,7 @@ package:
     - effect
     - prelude
     - halogen
+    - halogen-svg-elems
     - affjax
     - affjax-web
     - formatters

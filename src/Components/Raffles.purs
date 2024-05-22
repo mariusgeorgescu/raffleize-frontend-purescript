@@ -23,6 +23,7 @@ import Data.Either (hush)
 import Data.Formatter.DateTime (formatDateTime)
 import Data.List (List)
 import Data.Maybe (Maybe(..), fromMaybe)
+import Data.Newtype (unwrap)
 import Data.String (drop, length, take)
 import Data.Time.Duration (Milliseconds(..))
 import Data.Tuple (Tuple(..), fst, snd)
@@ -31,14 +32,17 @@ import Halogen as H
 import Halogen.HTML as HH
 import Halogen.HTML.Events as HE
 import Halogen.HTML.Properties as HP
-import Raffleize.Types (AssetClass, ValueItem(..))
-import RaffleizeDApp.CustomTypes.RaffleTypes (RaffleConfig(..), RaffleParam(..), RaffleStateData(..))
-import RaffleizeDApp.CustomTypes.RaffleTypes (RaffleStateData) as Raffleize.Types
+import Halogen.Svg.Attributes (Color(..))
+import Halogen.Svg.Attributes as HSA
+import Halogen.Svg.Elements as HSE
+import Raffleize.Types (AssetClass, ValueItem(..), flattenValue, Value)
+import RaffleizeDApp.CustomTypes.RaffleTypes (RaffleConfig(..), RaffleInfo(..), RaffleParam(..), RaffleStateData(..))
 import Web.UIEvent.MouseEvent (MouseEvent)
+
 
 type State =
   { loading :: Boolean
-  , result :: Maybe RaffleStateData
+  , result :: Maybe RaffleInfo
   }
 
 data Action
@@ -63,7 +67,7 @@ render {loading : l, result : Nothing } =   HH.button
                                               , HP.classes [ HH.ClassName "btn btn-primary"]
                                               ]
                                               [ HH.text "Update raffle info" ]
-render {loading : _, result : Just rsd} = renderRaffleStateData rsd
+render {loading : _, result : Just ri} = renderRaffleInfo ri
                                                       
                 
 
@@ -95,7 +99,7 @@ renderRaffleConfig (RaffleConfig cfg) = renderCollapse true "Configuration" $   
                                                       , renderDeadline cfg.rRevealDDL "Reveal Deadline" "Deadline for revealing secrets of the tickets"
                                                       , renderStat cfg.rMinTickets "Minimum Tickets Threshold" "Minimum tickets to be sold"
                                                       , renderStat cfg.rTicketPrice "Ticket Price" "Ticket price in Lovelaces"
-                                                      , renderTable ["1","2","3"] ["unu", "doi", "trei"]
+                                                      , renderValueTable cfg.rStake
                                                       ] 
                                                     
 
@@ -130,15 +134,6 @@ renderStatSecondary  value title desc =   HH.div [ HP.classes [ HH.ClassName "st
                                           ]
 
 
-renderTable  ∷ forall w i.  Array String → Array String → HH.HTML w i
-renderTable columns contents =  HH.div [ HP.classes [ HH.ClassName "overflow-x-auto" ] ] 
-                      [ HH.table [HP.classes [ HH.ClassName "table" ] ] 
-                         [
-                          HH.thead [] [HH.tr [] (mapToTH columns)]
-                         ,HH.tbody [] [HH.tr [] (mapToTD contents)]
-                         ]
-                      ] 
-
 mapToTH :: forall w i. Array String -> Array (HH.HTML w i)
 mapToTH strings = map (\s -> HH.th [] [HH.text s]) strings
 
@@ -146,14 +141,17 @@ mapToTD :: forall w i. Array String -> Array (HH.HTML w i)
 mapToTD strings = map (\s -> HH.td [] [HH.text s]) strings
 
 
+renderTable  ∷ forall w i.  Array String → Array (Array String )→ HH.HTML w i
+renderTable columns contents =  HH.div [ HP.classes [ HH.ClassName "overflow-x-auto" ] ] 
+                      [ HH.table [HP.classes [ HH.ClassName "table" ] ] 
+                         [
+                          HH.thead [] [HH.tr [] (mapToTH columns)]
+                          , HH.tbody [] ((\c -> HH.tr [] (mapToTD c) ) <$> contents)
+                         ]
+                      ] 
 
-
--- mapToTH :: forall w i. Array (HH.HTML w i)-> Array (HH.HTML w i)
--- mapToTH tx = map ( HH.th_ ) [tx]
-
--- renderValueItem :: ∀ w i. ValueItem → HH.HTML w i
--- renderValueItem (ValueItem ((Tuple ac i)) ) = _
-
+renderValueTable :: forall w i. Value -> HH.HTML w i
+renderValueTable value = renderTable ["Currency Symbol", "Token Name", "Quantty"] (flattenValue value)
 
 
 
@@ -179,61 +177,65 @@ shortString i s = let len = length s
                 in if len > (2 * i) then  
                     take i s <> "..." <> drop (len - i) s else s
 
+
+
 -- TODO CARD TOOLTIP PROGRESS
 -- TODO CARD TOOLTIP PROGRESS
 -- TODO CARD TOOLTIP PROGRESS
 -- TODO CARD TOOLTIP PROGRESS
 
--- <div class="stats bg-primary text-primary-content">
-  
---   <div class="stat">
---     <div class="stat-title">Account balance</div>
---     <div class="stat-value">$89,400</div>
---     <div class="stat-actions">
---       <button class="btn btn-sm btn-success">Add funds</button>
---     </div>
---   </div>
-  
---   <div class="stat">
---     <div class="stat-title">Current balance</div>
---     <div class="stat-value">$89,400</div>
---     <div class="stat-actions">
---       <button class="btn btn-sm">Withdrawal</button> 
---       <button class="btn btn-sm">Deposit</button>
---     </div>
---   </div>
-  
+renderRaffleInfo∷ forall cs m. RaffleInfo -> H.ComponentHTML Action cs m
+renderRaffleInfo (RaffleInfo ri) = HH.div [ HP.classes [ HH.ClassName "flex flex-col lg:flex-row" ] ] 
+                                    [ HH.div [ HP.classes [ HH.ClassName "flex flex-col" ] ] 
+                                      [
+                                      renderRaffleTimeline ri.riRsd
+                                      ,HH.div [ HP.classes [ HH.ClassName "divider divider-primary" ] ] []
+                                      ,renderRaffleTimeline ri.riRsd
+                                      ]
+                                    ,HH.div [ HP.classes [ HH.ClassName "divider divider-horizontal divider-primary" ] ] []
+                                    ,HH.img [HP.src ri.riImage, HP.width 340, HP.height 340]
+
+                                    ]
+
+
+renderRaffleTimeline∷ forall cs m. RaffleStateData -> H.ComponentHTML Action cs m
+renderRaffleTimeline (RaffleStateData rsd)  =  HH.ul [ HP.classes  [HH.ClassName "timeline" ]]
+                                                [
+                                                  HH.li [] 
+                                                  [ HH.div [ HP.classes  [HH.ClassName "timeline-start timeline-box" ]] [HH.text "Created"]      
+                                                  , HH.div [ HP.classes  [HH.ClassName "timeline-middle bg-success text-success" ]] [HH.text "|"]
+                                                  , HH.hr [ HP.classes  [HH.ClassName "bg-warning" ]]                                   
+                                                  ]
+                                                  , HH.li [] 
+                                                  [ HH.hr [ HP.classes  [HH.ClassName "bg-warning" ]]   
+                                                  , HH.div [ HP.classes  [HH.ClassName "timeline-end timeline-box" ]] [HH.text "Commit Deadline"]
+                                                  , HH.div [ HP.classes  [HH.ClassName "timeline-middle bg-warning text-warning" ]] [HH.text "|"]
+                                                  , HH.hr [ HP.classes  [HH.ClassName "bg-neutral text-neutral" ]]                                      
+                                                  ]
+                                                  , HH.li [] 
+                                                  [ HH.hr [ HP.classes  [HH.ClassName "bg-neutral text-neutral" ]]   
+                                                  , HH.div [ HP.classes  [HH.ClassName "timeline-start timeline-box" ]] [HH.text "Reveal Deadline"]
+                                                  , HH.div [ HP.classes  [HH.ClassName "timeline-middle bg-neutral text-neutral" ]] [HH.text "|"]                             
+                                                  ]
+                                                ]
+
+
+
+-- <div class="flex flex-col w-full lg:flex-row">
+--   <div class="grid flex-grow h-32 card bg-base-300 rounded-box place-items-center">content</div> 
+--   <div class="divider lg:divider-horizontal">OR</div> 
+--   <div class="grid flex-grow h-32 card bg-base-300 rounded-box place-items-center">content</div>
 -- </div>
 
-  -- HH.form
-  --   [ HE.onSubmit \ev -> MakeRequest ev ]
-  --   [ HH.h1_ [ HH.text "Raffles" ]
-  --   , HH.button
-  --       [ HP.disabled st.loading
-  --       , HP.type_ HP.ButtonSubmit
-  --       ]
-  --       [ HH.text "Get Raffles" ]
-  --   , HH.p_
-  --       [ HH.text $ if st.loading then "Working..." else "" ]
-  --   , HH.div_
-  --       case st.result of
-  --         Nothing -> []
-  --         Just res ->
-  --           [ HH.h2_
-  --               [ HH.text "Response:" ]
-  --           , HH.pre_
-  --               [ HH.code_ [ HH.text res ] ]
-  --           ]
-  --   ]
 
 handleAction :: forall output m. MonadAff m => Action -> H.HalogenM State Action () output m Unit
 handleAction = case _ of
   MakeRequest event -> do
     H.modify_ _ { loading = true }
-    response <- H.liftAff $ AX.get AXRF.json ("http://localhost:8082/raffle" )
+    response <- H.liftAff $ AX.get AXRF.json ("http://localhost:8082/info" )
     let r = case hush response of 
                 Nothing -> jsonEmptyObject
                 Just resp -> (resp.body)
-    let v =  lmap printJsonDecodeError $ decodeJson @Raffleize.Types.RaffleStateData r
+    let ri =  lmap printJsonDecodeError $ decodeJson @RaffleInfo r
 
-    H.modify_ _ { loading = false, result =  hush v}
+    H.modify_ _ { loading = false, result =  hush ri}
